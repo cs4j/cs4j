@@ -231,7 +231,7 @@ public class CronSequenceGenerator {
      * Parse the given pattern expression.
      */
     private void parse(String expression) throws IllegalArgumentException {
-        String[] fields = null;//TODO: StringUtils.split(expression, " ");
+        String[] fields = expression.split(" ");
         if (fields.length != 6) {
             throw new IllegalArgumentException(String.format(
                     "Cron expression must consist of 6 fields (found %d in \"%s\")", fields.length, expression));
@@ -256,10 +256,10 @@ public class CronSequenceGenerator {
      * @return a new String with the values from the list replaced
      */
     private String replaceOrdinals(String value, String commaSeparatedList) {
-        String[] list = Utils.split(commaSeparatedList, ",");
+        String[] list = commaSeparatedList.split(",");
         for (int i = 0; i < list.length; i++) {
             String item = list[i].toUpperCase();
-            value = Utils.replace(value.toUpperCase(), item, "" + i);
+            value = value.toUpperCase().replace(item, "" + i);
         }
         return value;
     }
@@ -294,14 +294,14 @@ public class CronSequenceGenerator {
     }
 
     private void setNumberHits(BitSet bits, String value, int min, int max) {
-        String[] fields = Utils.split(value, ",");
+        String[] fields = value.split(",");
         for (String field : fields) {
             if (!field.contains("/")) {
                 // Not an incrementer so it must be a range (possibly empty)
                 int[] range = getRange(field, min, max);
                 bits.set(range[0], range[1] + 1);
             } else {
-                String[] split = Utils.split(field, "/");
+                String[] split = field.split("/");
                 if (split.length > 2) {
                     throw new IllegalArgumentException("Incrementer has more than two fields: '" +
                             field + "' in expression \"" + this.expression + "\"");
@@ -332,7 +332,7 @@ public class CronSequenceGenerator {
         if (!field.contains("-")) {
             result[0] = result[1] = Integer.valueOf(field);
         } else {
-            String[] split = Utils.split(field, "-");
+            String[] split = field.split("-");
             if (split.length > 2) {
                 throw new IllegalArgumentException("Range has more than two fields: '" +
                         field + "' in expression \"" + this.expression + "\"");

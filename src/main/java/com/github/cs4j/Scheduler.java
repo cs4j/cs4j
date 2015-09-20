@@ -30,7 +30,7 @@ public class Scheduler implements Closeable {
         }, 10, 5, TimeUnit.SECONDS);
     }
 
-    public void schedule(Object obj) throws Exception {
+    public void schedule(Object obj) {
         for (Method m : obj.getClass().getMethods()) {
             Scheduled annotation = m.getAnnotation(Scheduled.class);
             if (annotation != null) {
