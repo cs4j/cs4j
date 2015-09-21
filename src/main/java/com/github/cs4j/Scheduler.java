@@ -6,6 +6,7 @@ import java.io.Closeable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * Cron scheduler implementation. Use Scheduler::schedule method to enable scheduling for all methods
  * annotated with Scheduled annotation.
  */
-public class Scheduler implements Closeable {
+public class Scheduler {
 
     @NotNull
     private final List<Task> tasks = new ArrayList<>();
@@ -25,13 +26,13 @@ public class Scheduler implements Closeable {
     private final ScheduledExecutorService manager = new ScheduledThreadPoolExecutor(1);
 
     @NotNull
-    private final ScheduledExecutorService workers;
+    private final ExecutorService workers;
 
     public Scheduler(int nThreads) {
-        this(Executors.newScheduledThreadPool(nThreads), 5, 5, TimeUnit.SECONDS);
+        this(Executors.newFixedThreadPool(nThreads), 5, 5, TimeUnit.SECONDS);
     }
 
-    public Scheduler(@NotNull ScheduledExecutorService s, int initialDelay, int checkInterval, TimeUnit timeUnit) {
+    public Scheduler(@NotNull ExecutorService s, int initialDelay, int checkInterval, TimeUnit timeUnit) {
         this.manager.scheduleAtFixedRate((Runnable) new Runnable() {
             @Override
             public void run() {
@@ -66,7 +67,7 @@ public class Scheduler implements Closeable {
                 }
                 try {
                     t.lastExecutingTime = System.currentTimeMillis();
-                    workers.schedule(t, 0, TimeUnit.NANOSECONDS);
+                    workers.execute(t);
                     t.executing = true;
                 } catch (RejectedExecutionException e) {
                     //todo:
@@ -75,9 +76,13 @@ public class Scheduler implements Closeable {
         }
     }
 
-    public void close() {
+    public void shutdown() {
         manager.shutdown();
         workers.shutdown();
+    }
+
+    public boolean isShutdown() {
+        return manager.isShutdown();
     }
 
     private class Task implements Runnable {
