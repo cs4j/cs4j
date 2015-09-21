@@ -11,9 +11,12 @@ mvn -DskipTests=true clean package install
 ## Usage
 
 ```java
-Scheduler scheduler = new Scheduler(10) ; // Create scheduler with a pool of 10 threads.
-Service service = ...; // get service instance.
-scheduler.schedule(service); // enable scheduling for all methods with @Scheduled annotation
+// Create scheduler with a pool of 10 threads.
+Scheduler scheduler = new Scheduler(10) ;
+ // get service instance.
+Service service = ...; 
+// enable scheduling for all methods with @Scheduled annotation
+scheduler.schedule(service); 
 ...
 scheduler.shutdown(); // shutdown the scheduler.
 ```
@@ -21,9 +24,9 @@ scheduler.shutdown(); // shutdown the scheduler.
 Example of Service class:
 ```java
 public class Service {
-   
-    // runs every first second each minute
-    @Scheduled(cron = "1 * * * * * *") // Cron format: second, minute, hour, day, month, day of the week  
+    // Cron format: second, minute, hour, day, month, day of the week
+    // The method runs every first second each minute
+    @Scheduled(cron = "1 * * * * * *")   
     void ping() {
         log.info("pong")
     }
