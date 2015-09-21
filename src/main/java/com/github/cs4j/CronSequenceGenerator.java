@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 /**
  * Date sequence generator for a
@@ -52,6 +53,8 @@ public class CronSequenceGenerator {
     private final BitSet minutes = new BitSet(60);
 
     private final BitSet seconds = new BitSet(60);
+
+    private static final Pattern SPACE_SPLITTER = Pattern.compile("[ ]+");
 
 
     /**
@@ -231,7 +234,7 @@ public class CronSequenceGenerator {
      * Parse the given pattern expression.
      */
     private void parse(String expression) throws IllegalArgumentException {
-        String[] fields = expression.split(" ");
+        String[] fields = SPACE_SPLITTER.split(expression);
         if (fields.length != 6) {
             throw new IllegalArgumentException(String.format(
                     "Cron expression must consist of 6 fields (found %d in \"%s\")", fields.length, expression));

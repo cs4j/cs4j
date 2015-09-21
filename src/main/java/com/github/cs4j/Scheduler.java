@@ -57,17 +57,17 @@ public class Scheduler implements Closeable {
         synchronized (tasks) {
             long currentMillis = System.currentTimeMillis();
             for (Task t : tasks) {
-                if (t.nextSchedulingTime >= currentMillis) {
+                if (t.nextExecutingTime >= currentMillis) {
                     continue;
                 }
-                if (t.scheduled) {
-                    t.nextSchedulingTime = t.sequenceGenerator.next(currentMillis);
+                if (t.executing) {
+                    t.nextExecutingTime = t.sequenceGenerator.next(currentMillis);
                     continue;
                 }
                 try {
-                    t.lastSchedulingTime = System.currentTimeMillis();
+                    t.lastExecutingTime = System.currentTimeMillis();
                     workers.schedule(t, 0, TimeUnit.NANOSECONDS);
-                    t.scheduled = true;
+                    t.executing = true;
                 } catch (RejectedExecutionException e) {
                     //todo:
                 }
@@ -88,9 +88,9 @@ public class Scheduler implements Closeable {
         @NotNull
         final CronSequenceGenerator sequenceGenerator;
 
-        volatile long lastSchedulingTime = 0;
-        volatile long nextSchedulingTime = 0;
-        volatile boolean scheduled;
+        volatile long lastExecutingTime = 0;
+        volatile long nextExecutingTime = 0;
+        volatile boolean executing;
 
         public Task(@NotNull Object instance, @NotNull Method method, @NotNull CronSequenceGenerator sequenceGenerator) {
             this.instance = instance;
@@ -105,8 +105,8 @@ public class Scheduler implements Closeable {
             } catch (Exception e) {
                 //TODO: log.error("", e);
             } finally {
-                nextSchedulingTime = sequenceGenerator.next(System.currentTimeMillis());
-                scheduled = false;
+                nextExecutingTime = sequenceGenerator.next(System.currentTimeMillis());
+                executing = false;
             }
         }
     }
