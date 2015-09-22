@@ -2,7 +2,6 @@ package com.github.cs4j;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Closeable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +18,32 @@ import java.util.concurrent.TimeUnit;
  */
 public class Scheduler {
 
+    /**
+     * List of managed tasks.
+     */
     @NotNull
     private final List<Task> tasks = new ArrayList<>();
 
+    /**
+     * Scheduling thread. No tasks run on this thread.
+     */
     @NotNull
     private final ScheduledExecutorService manager = new ScheduledThreadPoolExecutor(1);
 
+    /**
+     * Task executors. No management is performed on these threads.
+     */
     @NotNull
     private final ExecutorService workers;
 
+    /**
+     * Instantiates new Scheduler initialized with executor service
+     * created by {@link Executors#newFixedThreadPool(int)} call with nThreads.
+     * <p/>
+     * Initial delay is 5 seconds. Periodical check interval is 5 seconds.
+     *
+     * @param nThreads number of threads in pool.
+     */
     public Scheduler(int nThreads) {
         this(Executors.newFixedThreadPool(nThreads), 5, 5, TimeUnit.SECONDS);
     }

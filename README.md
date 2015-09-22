@@ -1,4 +1,4 @@
-__cs4j__  [Cron Scheduler for Java] - is a small and efficient Cron style task scheduler for Java.
+__cs4j__  [Cron Scheduler for Java] - is a small Cron style task scheduler for Java.
 
 [![Build Status](https://travis-ci.org/cs4j/cs4j.svg?branch=master)]	(https://travis-ci.org/cs4j/cs4j)
 

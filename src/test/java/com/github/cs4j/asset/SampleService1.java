@@ -8,7 +8,7 @@ import com.github.cs4j.Scheduled;
 public class SampleService1 {
 
     public static volatile int staticCounter = 0;
-    public int counter = 0;
+    public volatile int counter = 0;
 
     private final Callback callback;
 
@@ -18,8 +18,10 @@ public class SampleService1 {
 
     @Scheduled(cron = "* * * * * *")
     public void tick() {
-        counter++;
-        staticCounter++;
+        synchronized (SampleService1.class) {
+            counter++;
+            staticCounter++;
+        }
         callback.callback(this);
     }
 

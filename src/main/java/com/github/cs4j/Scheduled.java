@@ -7,6 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Enables scheduling for the method annotated.
+ * <p/>
  * Cron format: second, minute, hour, day, month, day of the week
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})

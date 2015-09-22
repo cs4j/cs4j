@@ -68,13 +68,13 @@ public class SchedulerTest extends Assert {
                 }
             }
         };
-        for (int i = 0; i < 10; i++) {
-            scheduler.schedule(new SampleService1(c));
-        }
         synchronized (SYNC_OBJECT) {
+            for (int i = 0; i < 10; i++) {
+                scheduler.schedule(new SampleService1(c));
+            }
             SYNC_OBJECT.wait(5 * 1000L);
         }
         scheduler.shutdown();
-        assertTrue(SampleService1.staticCounter >= nIterations);
+        assertTrue("Number of iterations: " + SampleService1.staticCounter + ">=" + nIterations, SampleService1.staticCounter >= nIterations);
     }
 }
