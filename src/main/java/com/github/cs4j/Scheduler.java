@@ -1,6 +1,7 @@
 package com.github.cs4j;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -35,6 +36,9 @@ public class Scheduler {
      */
     @NotNull
     private final ExecutorService workers;
+
+    @Nullable
+    private EventLogger eventLogger;
 
     /**
      * Instantiates new Scheduler initialized with executor service
@@ -86,7 +90,9 @@ public class Scheduler {
                     workers.execute(t);
                     t.executing = true;
                 } catch (RejectedExecutionException e) {
-                    //todo:
+                    if (eventLogger != null) {
+                        eventLogger.onError("Failed to start task: " + t, e);
+                    }
                 }
             }
         }
@@ -99,6 +105,10 @@ public class Scheduler {
 
     public boolean isShutdown() {
         return manager.isShutdown();
+    }
+
+    public void setEventLogger(@Nullable EventLogger eventLogger) {
+        this.eventLogger = eventLogger;
     }
 
     private class Task implements Runnable {
@@ -124,11 +134,15 @@ public class Scheduler {
             try {
                 method.invoke(instance);
             } catch (Exception e) {
-                //TODO: log.error("", e);
+                if (eventLogger != null) {
+                    eventLogger.onError("Exception in task: " + this, e);
+                }
             } finally {
                 nextExecutingTime = sequenceGenerator.next(System.currentTimeMillis());
                 executing = false;
             }
         }
     }
+
+
 }
