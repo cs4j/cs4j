@@ -13,7 +13,7 @@ mvn -DskipTests=true clean package install
 ```java
 // Create scheduler with a pool of 10 threads.
 Scheduler scheduler = new Scheduler(10) ;
- // get service instance.
+ // get service instance. This can be any Java object with @Scheduled methods.
 Service service = ...; 
 // enable scheduling for all methods with @Scheduled annotation
 scheduler.schedule(service); 
