@@ -63,7 +63,7 @@ CS4J has no additional runtime dependencies and it's result binary size is about
 
 ### Requirements
 
-Java 1.6+
+Java 1.7+
 
 
 ### License
