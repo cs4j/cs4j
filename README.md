@@ -8,6 +8,27 @@ __cs4j__  [Cron Scheduler for Java] - is a small Cron style task scheduler for J
 mvn -DskipTests=true clean package install
 ```
 
+## Maven
+
+Add snapshots repository to your pom.xml file. The project now is in alpha stage and has no public releases to Central Repository yet.
+```xml
+<repositories>
+    <repository>
+        <id>ossrh</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+</repositories>
+```
+
+Add project dependency:
+```xml
+<dependency>
+    <groupId>com.github.cs4j</groupId>
+    <artifactId>cs4j</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency
+```
+
 ## Usage
 
 ```java
