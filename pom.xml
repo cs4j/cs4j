@@ -4,7 +4,7 @@
 
     <groupId>com.github.cs4j</groupId>
     <artifactId>cs4j</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>cs4j</name>
@@ -122,6 +122,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>2.10.3</version>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -131,7 +134,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- Sign release build o-->
+                    <!-- Sign release build-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
