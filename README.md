@@ -2,12 +2,6 @@ __cs4j__  [Cron Scheduler for Java] - is a small Cron style task scheduler for J
 
 [![Build Status](https://travis-ci.org/cs4j/cs4j.svg?branch=master)]	(https://travis-ci.org/cs4j/cs4j)
 
-## Building
-
-```
-mvn -DskipTests=true clean package install
-```
-
 ## Maven
 
 ```xml
