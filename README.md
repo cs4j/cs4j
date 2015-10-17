@@ -37,8 +37,8 @@ public class Service {
 ### Implementation details
 The scheduler is based on Spring's CronSequenceGenerator class. It uses compatible syntax, inherits and successfully passes all original Spring tests.
  
-The package is recommended when you can' use  original Spring implementation for some reason.
-CS4J has no additional runtime dependencies and it's result binary size is about 11kb.
+The package is recommended when you can't use original Spring implementation for some reason.
+CS4J has no additional runtime dependencies and it's JAR file size is about 11kb.
 
 ### Requirements
 
