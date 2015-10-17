@@ -44,6 +44,7 @@ The scheduler is based on Spring's CronSequenceGenerator class. It uses compatib
 The package is recommended when you can't use original Spring implementation for some reason.
 CS4J has no additional runtime dependencies and it's JAR file size is about 11kb.
 
+
 ### Requirements
 
 Java 1.7+
