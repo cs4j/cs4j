@@ -2,10 +2,14 @@ __cs4j__  [Cron Scheduler for Java] - is a small Cron style task scheduler for J
 
 [![Build Status](https://travis-ci.org/cs4j/cs4j.svg?branch=master)]	(https://travis-ci.org/cs4j/cs4j)
 
-## Building
+## Maven
 
-```
-mvn -DskipTests=true clean package install
+```xml
+<dependency>
+    <groupId>com.github.cs4j</groupId>
+    <artifactId>cs4j</artifactId>
+    <version>1.0.0</version>
+</dependency
 ```
 
 ## Usage
@@ -13,7 +17,7 @@ mvn -DskipTests=true clean package install
 ```java
 // Create scheduler with a pool of 10 threads.
 Scheduler scheduler = new Scheduler(10) ;
- // get service instance.
+ // get service instance. This can be any Java object with @Scheduled methods.
 Service service = ...; 
 // enable scheduling for all methods with @Scheduled annotation
 scheduler.schedule(service); 
@@ -42,7 +46,7 @@ CS4J has no additional runtime dependencies and it's JAR file size is about 11kb
 
 ### Requirements
 
-Java 1.6+
+Java 1.7+
 
 
 ### License
