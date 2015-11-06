@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * Cron scheduler implementation. Use Scheduler::schedule method to enable scheduling for all methods
  * annotated with Scheduled annotation.
  */
-public class Scheduler {
+public class Scheduler implements AutoCloseable {
 
     /**
      * List of managed tasks.
@@ -64,11 +65,19 @@ public class Scheduler {
 
 
     public void schedule(@NotNull Object obj) {
-        for (Method m : obj.getClass().getMethods()) {
-            Scheduled annotation = m.getAnnotation(Scheduled.class);
-            if (annotation != null) {
-                synchronized (tasks) {
-                    tasks.add(new Task(obj, m, new CronSequenceGenerator(annotation.cron())));
+        for (Class<?> cls = obj.getClass(); cls != Object.class; cls = cls.getSuperclass()) {
+            // processing all methods, not only public ones in order to detect potential errors
+            // earlier during initialization phase.
+            for (Method m : cls.getDeclaredMethods()) {
+                Scheduled annotation = m.getAnnotation(Scheduled.class);
+                if (annotation != null) {
+                    int mod = m.getModifiers();
+                    if (!Modifier.isPublic(mod)) {
+                        throw new IllegalArgumentException("Method is private: " + m);
+                    }
+                    synchronized (tasks) {
+                        tasks.add(new Task(obj, m, new CronSequenceGenerator(annotation.cron())));
+                    }
                 }
             }
         }
@@ -109,6 +118,11 @@ public class Scheduler {
 
     public void setEventLogger(@Nullable EventLogger eventLogger) {
         this.eventLogger = eventLogger;
+    }
+
+    @Override
+    public void close() {
+        shutdown();
     }
 
     private class Task implements Runnable {
