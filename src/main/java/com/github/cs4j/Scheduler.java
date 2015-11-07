@@ -68,17 +68,21 @@ public class Scheduler implements AutoCloseable {
         for (Class<?> cls = obj.getClass(); cls != Object.class; cls = cls.getSuperclass()) {
             // processing all methods, not only public ones in order to detect potential errors
             // earlier during initialization phase.
-            for (Method m : cls.getDeclaredMethods()) {
-                Scheduled annotation = m.getAnnotation(Scheduled.class);
-                if (annotation != null) {
-                    int mod = m.getModifiers();
-                    if (!Modifier.isPublic(mod)) {
-                        throw new IllegalArgumentException("Method is private: " + m);
-                    }
-                    synchronized (tasks) {
-                        tasks.add(new Task(obj, m, new CronSequenceGenerator(annotation.cron())));
+            try {
+                for (Method m : cls.getDeclaredMethods()) {
+                    Scheduled annotation = m.getAnnotation(Scheduled.class);
+                    if (annotation != null) {
+                        int mod = m.getModifiers();
+                        if (!Modifier.isPublic(mod)) {
+                            throw new IllegalArgumentException("Method is private: " + m);
+                        }
+                        synchronized (tasks) {
+                            tasks.add(new Task(obj, m, new CronSequenceGenerator(annotation.cron())));
+                        }
                     }
                 }
+            } catch (SecurityException ignored) {
+                break;
             }
         }
     }
