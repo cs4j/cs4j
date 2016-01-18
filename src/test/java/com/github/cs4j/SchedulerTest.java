@@ -114,4 +114,26 @@ public class SchedulerTest extends Assert {
             });
         }
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkMethodWithParametersThrowsException1() throws InterruptedException {
+        try (Scheduler scheduler = new Scheduler(1)) {
+            scheduler.schedule(new Object() {
+                @Scheduled
+                public void foo(int x) {
+                }
+            });
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkMethodWithParametersThrowsException2() throws InterruptedException {
+        try (Scheduler scheduler = new Scheduler(1)) {
+            scheduler.schedule(new Object() {
+                @Scheduled
+                public void foo(Object... args) {
+                }
+            });
+        }
+    }
 }

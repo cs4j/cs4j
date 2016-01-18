@@ -76,6 +76,9 @@ public class Scheduler implements AutoCloseable {
                         if (!Modifier.isPublic(mod)) {
                             throw new IllegalArgumentException("Method is private: " + m);
                         }
+                        if (m.getGenericParameterTypes().length != 0) {
+                            throw new IllegalArgumentException("Method has non zero parameters: " + m);
+                        }
                         synchronized (tasks) {
                             tasks.add(new Task(obj, m, new CronSequenceGenerator(annotation.cron())));
                         }
