@@ -8,7 +8,7 @@ __CS4j__  (Cron Scheduler for Java) - is a small Cron style task scheduler for J
 <dependency>
     <groupId>com.github.cs4j</groupId>
     <artifactId>cs4j</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency
 ```
 
