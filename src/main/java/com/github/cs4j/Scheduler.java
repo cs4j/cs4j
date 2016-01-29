@@ -36,7 +36,7 @@ public class Scheduler implements AutoCloseable {
      * Task executors. No management is performed on these threads.
      */
     @NotNull
-    private final ExecutorService workers;
+    private final ExecutorService executorService;
 
     @Nullable
     private EventLogger eventLogger;
@@ -60,7 +60,7 @@ public class Scheduler implements AutoCloseable {
                 doSchedule();
             }
         }, initialDelay, checkInterval, timeUnit);
-        this.workers = s;
+        this.executorService = s;
     }
 
 
@@ -103,7 +103,7 @@ public class Scheduler implements AutoCloseable {
                 }
                 try {
                     t.lastExecutingTime = System.currentTimeMillis();
-                    workers.execute(t);
+                    executorService.execute(t);
                     t.executing = true;
                 } catch (RejectedExecutionException e) {
                     if (eventLogger != null) {
@@ -116,7 +116,7 @@ public class Scheduler implements AutoCloseable {
 
     public void shutdown() {
         manager.shutdown();
-        workers.shutdown();
+        executorService.shutdown();
     }
 
     public boolean isShutdown() {
@@ -164,6 +164,5 @@ public class Scheduler implements AutoCloseable {
             }
         }
     }
-
 
 }
