@@ -4,13 +4,11 @@ __CS4j__  (Cron Scheduler for Java) - is a small Cron style task scheduler for J
 
 ## Maven
 
-```xml
-<dependency>
-    <groupId>com.github.cs4j</groupId>
-    <artifactId>cs4j</artifactId>
-    <version>1.0.2</version>
-</dependency
-```
+    <dependency>
+        <groupId>com.github.cs4j</groupId>
+        <artifactId>cs4j</artifactId>
+        <version>1.0.2</version>
+    </dependency
 
 ## Usage
 
@@ -47,9 +45,15 @@ CS4J has no additional runtime dependencies and it's JAR file size is about 11kb
 
 ### Requirements
 
-Java 1.7+
+Java 7+
 
 
 ### License
 
-This project available under Apache License 2.0.
+Apache License 2.0
+
+### Related projects
+* [mjdbc](https://github.com/mjdbc/mjdbc) - small and efficient JDBC wrapper
+* [μotto](https://github.com/uotto/uotto) - plain Java version of [Otto Event Bus](https://github.com/square/otto) with no dependencies
+
+
