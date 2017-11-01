@@ -7,14 +7,15 @@ __CS4j__  (Cron Scheduler for Java) - is a small Cron style task scheduler for J
     <dependency>
         <groupId>com.github.cs4j</groupId>
         <artifactId>cs4j</artifactId>
-        <version>1.0.2</version>
+        <version>1.1.0</version>
     </dependency
 
 ## Usage
 
 ```java
-// Create scheduler with a pool of 10 threads.
-Scheduler scheduler = new Scheduler(10) ;
+// Create scheduler with a pool of 10 threads with 1 second initial delay and 3 seconds check interval. 
+// The name of the scheduler thread will be set to 'T1'
+Scheduler scheduler = new Scheduler(Executors.newFixedThreadPool(10), 1, 3, TimeUnit.SECONDS, "T1") ;
  // get service instance. This can be any Java object with @Scheduled methods.
 Service service = ...; 
 // enable scheduling for all methods with @Scheduled annotation

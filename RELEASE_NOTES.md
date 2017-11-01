@@ -1,4 +1,7 @@
-## v1.0.3 - in development
+## v1.1.1 - in development
+
+## v1.1.0 - Nov, 1, 2017
+- Better state monitoring API for Scheduler
 
 ## v1.0.2 - Jan, 20, 2016
 
