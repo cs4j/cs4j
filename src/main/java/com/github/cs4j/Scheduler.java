@@ -1,18 +1,15 @@
 package com.github.cs4j;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Cron scheduler implementation. Use Scheduler::schedule method to enable scheduling for all methods
@@ -21,46 +18,47 @@ import java.util.concurrent.TimeUnit;
 public class Scheduler implements AutoCloseable {
 
     /**
+     * Stub used when no actual logger instance is set/
+     */
+    private static final EventLogger NULL_LOGGER = new EventLogger() {
+    };
+
+    /**
+     * Object used for internal locking/notifications.
+     */
+    private final Object monitor = new Object();
+
+    /**
      * List of managed tasks.
      */
     @NotNull
-    private final List<Task> tasks = new ArrayList<>();
+    private final List<SchedulerTask> tasks = new ArrayList<>();
 
     /**
-     * Scheduling thread. No tasks run on this thread.
+     * Task executor instance.
      */
     @NotNull
-    private final ScheduledExecutorService manager = new ScheduledThreadPoolExecutor(1);
+    public final ExecutorService tasksExecutor;
+
+    @NotNull
+    EventLogger eventLogger = NULL_LOGGER;
 
     /**
-     * Task executors. No management is performed on these threads.
+     * Thread that makes all scheduling job.
      */
     @NotNull
-    private final ExecutorService executorService;
-
-    @Nullable
-    private EventLogger eventLogger;
+    public final SchedulerThread schedulerThread;
 
     /**
-     * Instantiates new Scheduler initialized with executor service
-     * created by {@link Executors#newFixedThreadPool(int)} call with nThreads.
-     * <p/>
-     * Initial delay is 5 seconds. Periodical check interval is 5 seconds.
-     *
-     * @param nThreads number of threads in pool.
+     * If scheduler is active or not.
      */
-    public Scheduler(int nThreads) {
-        this(Executors.newFixedThreadPool(nThreads), 5, 5, TimeUnit.SECONDS);
-    }
+    private boolean active;
 
-    public Scheduler(@NotNull ExecutorService s, int initialDelay, int checkInterval, TimeUnit timeUnit) {
-        this.manager.scheduleAtFixedRate((Runnable) new Runnable() {
-            @Override
-            public void run() {
-                doSchedule();
-            }
-        }, initialDelay, checkInterval, timeUnit);
-        this.executorService = s;
+    public Scheduler(@NotNull ExecutorService tasksExecutor, int initialDelay, int checkInterval, @NotNull TimeUnit timeUnit, @NotNull String schedulerThreadName) {
+        schedulerThread = new SchedulerThread(initialDelay, checkInterval, timeUnit, schedulerThreadName);
+        this.tasksExecutor = tasksExecutor;
+        active = true;
+        schedulerThread.start();
     }
 
 
@@ -79,8 +77,8 @@ public class Scheduler implements AutoCloseable {
                         if (m.getGenericParameterTypes().length != 0) {
                             throw new IllegalArgumentException("Method has non zero parameters: " + m);
                         }
-                        synchronized (tasks) {
-                            tasks.add(new Task(obj, m, new CronSequenceGenerator(annotation.cron())));
+                        synchronized (monitor) {
+                            tasks.add(new SchedulerTask(this, obj, m, new CronSequenceGenerator(annotation.cron())));
                         }
                     }
                 }
@@ -90,10 +88,11 @@ public class Scheduler implements AutoCloseable {
         }
     }
 
-    private void doSchedule() {
-        synchronized (tasks) {
+    private void checkAndExecute() {
+        eventLogger.onCheckInterval();
+        synchronized (monitor) {
             long currentMillis = System.currentTimeMillis();
-            for (Task t : tasks) {
+            for (SchedulerTask t : tasks) {
                 if (t.nextExecutingTime >= currentMillis) {
                     continue;
                 }
@@ -103,28 +102,36 @@ public class Scheduler implements AutoCloseable {
                 }
                 try {
                     t.lastExecutingTime = System.currentTimeMillis();
-                    executorService.execute(t);
+                    eventLogger.onBeforeExecute(t);
+                    tasksExecutor.execute(t);
                     t.executing = true;
                 } catch (RejectedExecutionException e) {
-                    if (eventLogger != null) {
-                        eventLogger.onError("Failed to start task: " + t, e);
-                    }
+                    eventLogger.onError("Failed to start task: " + t, e);
                 }
             }
         }
     }
 
     public void shutdown() {
-        manager.shutdown();
-        executorService.shutdown();
+        active = false;
+        synchronized (monitor) {
+            monitor.notify();
+        }
+        tasksExecutor.shutdown();
     }
 
     public boolean isShutdown() {
-        return manager.isShutdown();
+        return !active;
     }
 
     public void setEventLogger(@Nullable EventLogger eventLogger) {
-        this.eventLogger = eventLogger;
+        this.eventLogger = eventLogger == null ? NULL_LOGGER : eventLogger;
+    }
+
+    @SuppressWarnings("unused")
+    @NotNull
+    public List<SchedulerTask> getTasks() {
+        return Collections.unmodifiableList(tasks);
     }
 
     @Override
@@ -132,37 +139,53 @@ public class Scheduler implements AutoCloseable {
         shutdown();
     }
 
-    private class Task implements Runnable {
-        @NotNull
-        final Object instance;
-        @NotNull
-        final Method method;
-        @NotNull
-        final CronSequenceGenerator sequenceGenerator;
+    public class SchedulerThread extends Thread {
+        public final int initialDelay;
+        public final int checkInterval;
+        public final TimeUnit timeUnit;
 
-        volatile long lastExecutingTime = 0;
-        volatile long nextExecutingTime = 0;
-        volatile boolean executing;
-
-        public Task(@NotNull Object instance, @NotNull Method method, @NotNull CronSequenceGenerator sequenceGenerator) {
-            this.instance = instance;
-            this.method = method;
-            this.sequenceGenerator = sequenceGenerator;
+        private SchedulerThread(int initialDelay, int checkInterval, TimeUnit timeUnit, @NotNull String threadName) {
+            if (initialDelay < 0) {
+                throw new IllegalArgumentException("initialDelay < 0. Value: " + initialDelay);
+            }
+            if (checkInterval <= 0) {
+                throw new IllegalArgumentException("checkInterval must be > 0. Value: " + checkInterval);
+            }
+            if (timeUnit == null) {
+                throw new IllegalArgumentException("timeUnit is null");
+            }
+            this.initialDelay = initialDelay;
+            this.checkInterval = checkInterval;
+            this.timeUnit = timeUnit;
+            setName(threadName);
+            setDaemon(true);
         }
 
-
+        @Override
         public void run() {
-            try {
-                method.invoke(instance);
-            } catch (Exception e) {
-                if (eventLogger != null) {
-                    eventLogger.onError("Exception in task: " + this, e);
+            if (initialDelay > 0) {
+                synchronized (monitor) {
+                    try {
+                        monitor.wait(timeUnit.toMillis(initialDelay));
+                    } catch (InterruptedException ignored) {
+                    }
                 }
-            } finally {
-                nextExecutingTime = sequenceGenerator.next(System.currentTimeMillis());
-                executing = false;
+            }
+            long checkIntervalMillis = timeUnit.toMillis(checkInterval);
+            try {
+                while (active) {
+                    checkAndExecute();
+                    try {
+                        synchronized (monitor) {
+                            monitor.wait(checkIntervalMillis);
+                        }
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Got internal error that must never happen!");
+                e.printStackTrace();
             }
         }
     }
-
 }

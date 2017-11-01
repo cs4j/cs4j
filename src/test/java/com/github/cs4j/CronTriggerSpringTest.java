@@ -58,13 +58,13 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testMatchAll() throws Exception {
+    public void testMatchAll() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("* * * * * *", timeZone);
         assertEquals(calendar.getTimeInMillis(), trigger.next(date.getTime()));
     }
 
     @Test
-    public void testMatchLastSecond() throws Exception {
+    public void testMatchLastSecond() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("* * * * * *", timeZone);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.set(Calendar.SECOND, 58);
@@ -72,7 +72,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testMatchSpecificSecond() throws Exception {
+    public void testMatchSpecificSecond() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("10 * * * * *", timeZone);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.set(Calendar.SECOND, 9);
@@ -80,7 +80,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementSecondByOne() throws Exception {
+    public void testIncrementSecondByOne() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("11 * * * * *", timeZone);
         calendar.set(Calendar.SECOND, 10);
         Date date = calendar.getTime();
@@ -89,7 +89,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementSecondWithPreviousExecutionTooEarly() throws Exception {
+    public void testIncrementSecondWithPreviousExecutionTooEarly() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("11 * * * * *", timeZone);
         calendar.set(Calendar.SECOND, 11);
         Date date = calendar.getTime();
@@ -99,7 +99,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementSecondAndRollover() throws Exception {
+    public void testIncrementSecondAndRollover() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("10 * * * * *", timeZone);
         calendar.set(Calendar.SECOND, 11);
         Date date = calendar.getTime();
@@ -108,7 +108,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testSecondRange() throws Exception {
+    public void testSecondRange() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("10-15 * * * * *", timeZone);
         calendar.set(Calendar.SECOND, 9);
         assertMatchesNextSecond(trigger, calendar);
@@ -117,7 +117,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementMinute() throws Exception {
+    public void testIncrementMinute() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 * * * * *", timeZone);
         calendar.set(Calendar.MINUTE, 10);
         Date date = calendar.getTime();
@@ -131,7 +131,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementMinuteByOne() throws Exception {
+    public void testIncrementMinuteByOne() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 11 * * * *", timeZone);
         calendar.set(Calendar.MINUTE, 10);
         Date date = calendar.getTime();
@@ -142,7 +142,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementMinuteAndRollover() throws Exception {
+    public void testIncrementMinuteAndRollover() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 10 * * * *", timeZone);
         calendar.set(Calendar.MINUTE, 11);
         calendar.set(Calendar.SECOND, 0);
@@ -152,7 +152,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementHour() throws Exception {
+    public void testIncrementHour() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 * * * *", timeZone);
         calendar.set(Calendar.MONTH, 9);
         calendar.set(Calendar.DAY_OF_MONTH, 30);
@@ -169,7 +169,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementHourAndRollover() throws Exception {
+    public void testIncrementHourAndRollover() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 * * * *", timeZone);
         calendar.set(Calendar.MONTH, 9);
         calendar.set(Calendar.DAY_OF_MONTH, 10);
@@ -187,7 +187,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementDayOfMonth() throws Exception {
+    public void testIncrementDayOfMonth() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 * * *", timeZone);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         Date date = calendar.getTime();
@@ -205,7 +205,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementDayOfMonthByOne() throws Exception {
+    public void testIncrementDayOfMonthByOne() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("* * * 10 * *", timeZone);
         calendar.set(Calendar.DAY_OF_MONTH, 9);
         Date date = calendar.getTime();
@@ -217,7 +217,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementDayOfMonthAndRollover() throws Exception {
+    public void testIncrementDayOfMonthAndRollover() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("* * * 10 * *", timeZone);
         calendar.set(Calendar.DAY_OF_MONTH, 11);
         Date date = calendar.getTime();
@@ -230,7 +230,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testDailyTriggerInShortMonth() throws Exception {
+    public void testDailyTriggerInShortMonth() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 * * *", timeZone);
         calendar.set(Calendar.MONTH, 8); // September: 30 days
         calendar.set(Calendar.DAY_OF_MONTH, 30);
@@ -249,7 +249,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testDailyTriggerInLongMonth() throws Exception {
+    public void testDailyTriggerInLongMonth() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 * * *", timeZone);
         calendar.set(Calendar.MONTH, 7); // August: 31 days and not a daylight saving boundary
         calendar.set(Calendar.DAY_OF_MONTH, 30);
@@ -268,7 +268,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testDailyTriggerOnDaylightSavingBoundary() throws Exception {
+    public void testDailyTriggerOnDaylightSavingBoundary() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 * * *", timeZone);
         calendar.set(Calendar.MONTH, 9); // October: 31 days and a daylight saving boundary in CET
         calendar.set(Calendar.DAY_OF_MONTH, 30);
@@ -287,7 +287,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementMonth() throws Exception {
+    public void testIncrementMonth() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 1 * *", timeZone);
         calendar.set(Calendar.MONTH, 9);
         calendar.set(Calendar.DAY_OF_MONTH, 30);
@@ -306,7 +306,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementMonthAndRollover() throws Exception {
+    public void testIncrementMonthAndRollover() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 1 * *", timeZone);
         calendar.set(Calendar.MONTH, 11);
         calendar.set(Calendar.DAY_OF_MONTH, 31);
@@ -327,7 +327,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testMonthlyTriggerInLongMonth() throws Exception {
+    public void testMonthlyTriggerInLongMonth() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 31 * *", timeZone);
         calendar.set(Calendar.MONTH, 9);
         calendar.set(Calendar.DAY_OF_MONTH, 30);
@@ -340,7 +340,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testMonthlyTriggerInShortMonth() throws Exception {
+    public void testMonthlyTriggerInShortMonth() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 1 * *", timeZone);
         calendar.set(Calendar.MONTH, 9);
         calendar.set(Calendar.DAY_OF_MONTH, 30);
@@ -354,7 +354,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementDayOfWeekByOne() throws Exception {
+    public void testIncrementDayOfWeekByOne() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("* * * * * 2", timeZone);
         calendar.set(Calendar.DAY_OF_WEEK, 2);
         Date date = calendar.getTime();
@@ -367,7 +367,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testIncrementDayOfWeekAndRollover() throws Exception {
+    public void testIncrementDayOfWeekAndRollover() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("* * * * * 2", timeZone);
         calendar.set(Calendar.DAY_OF_WEEK, 4);
         Date date = calendar.getTime();
@@ -380,7 +380,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testSpecificMinuteSecond() throws Exception {
+    public void testSpecificMinuteSecond() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("55 5 * * * *", timeZone);
         calendar.set(Calendar.MINUTE, 4);
         calendar.set(Calendar.SECOND, 54);
@@ -397,7 +397,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testSpecificHourSecond() throws Exception {
+    public void testSpecificHourSecond() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("55 * 10 * * *", timeZone);
         calendar.set(Calendar.HOUR_OF_DAY, 9);
         calendar.set(Calendar.SECOND, 54);
@@ -415,7 +415,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testSpecificMinuteHour() throws Exception {
+    public void testSpecificMinuteHour() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("* 5 10 * * *", timeZone);
         calendar.set(Calendar.MINUTE, 4);
         calendar.set(Calendar.HOUR_OF_DAY, 9);
@@ -433,7 +433,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testSpecificDayOfMonthSecond() throws Exception {
+    public void testSpecificDayOfMonthSecond() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("55 * * 3 * *", timeZone);
         calendar.set(Calendar.DAY_OF_MONTH, 2);
         calendar.set(Calendar.SECOND, 54);
@@ -451,7 +451,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testSpecificDate() throws Exception {
+    public void testSpecificDate() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("* * * 3 11 *", timeZone);
         calendar.set(Calendar.DAY_OF_MONTH, 2);
         calendar.set(Calendar.MONTH, 9);
@@ -472,7 +472,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNonExistentSpecificDate() throws Exception {
+    public void testNonExistentSpecificDate() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 31 6 *", timeZone);
         calendar.set(Calendar.DAY_OF_MONTH, 10);
         calendar.set(Calendar.MONTH, 2);
@@ -481,7 +481,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testLeapYearSpecificDate() throws Exception {
+    public void testLeapYearSpecificDate() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 0 29 2 *", timeZone);
         calendar.set(Calendar.YEAR, 2007);
         calendar.set(Calendar.DAY_OF_MONTH, 10);
@@ -502,7 +502,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testWeekDaySequence() throws Exception {
+    public void testWeekDaySequence() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 0 7 ? * MON-FRI", timeZone);
         // This is a Saturday
         calendar.set(2009, Calendar.SEPTEMBER, 26);
@@ -525,137 +525,137 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testDayOfWeekIndifferent() throws Exception {
+    public void testDayOfWeekIndifferent() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("* * * 2 * *", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("* * * 2 * ?", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test
-    public void testSecondIncrementer() throws Exception {
+    public void testSecondIncrementer() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("57,59 * * * * *", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("57/2 * * * * *", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test
-    public void testSecondIncrementerWithRange() throws Exception {
+    public void testSecondIncrementerWithRange() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("1,3,5 * * * * *", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("1-6/2 * * * * *", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test
-    public void testHourIncrementer() throws Exception {
+    public void testHourIncrementer() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("* * 4,8,12,16,20 * * *", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("* * 4/4 * * *", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test
-    public void testDayNames() throws Exception {
+    public void testDayNames() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("* * * * * 0-6", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("* * * * * TUE,WED,THU,FRI,SAT,SUN,MON", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test
-    public void testSundayIsZero() throws Exception {
+    public void testSundayIsZero() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("* * * * * 0", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("* * * * * SUN", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test
-    public void testSundaySynonym() throws Exception {
+    public void testSundaySynonym() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("* * * * * 0", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("* * * * * 7", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test
-    public void testMonthNames() throws Exception {
+    public void testMonthNames() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("* * * * 1-12 *", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("* * * * FEB,JAN,MAR,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC *", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test
-    public void testMonthNamesMixedCase() throws Exception {
+    public void testMonthNamesMixedCase() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("* * * * 2 *", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("* * * * Feb *", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSecondInvalid() throws Exception {
+    public void testSecondInvalid() {
         new CronSequenceGenerator("77 * * * * *", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSecondRangeInvalid() throws Exception {
+    public void testSecondRangeInvalid() {
         new CronSequenceGenerator("44-77 * * * * *", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMinuteInvalid() throws Exception {
+    public void testMinuteInvalid() {
         new CronSequenceGenerator("* 77 * * * *", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMinuteRangeInvalid() throws Exception {
+    public void testMinuteRangeInvalid() {
         new CronSequenceGenerator("* 44-77 * * * *", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testHourInvalid() throws Exception {
+    public void testHourInvalid() {
         new CronSequenceGenerator("* * 27 * * *", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testHourRangeInvalid() throws Exception {
+    public void testHourRangeInvalid() {
         new CronSequenceGenerator("* * 23-28 * * *", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testDayInvalid() throws Exception {
+    public void testDayInvalid() {
         new CronSequenceGenerator("* * * 45 * *", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testDayRangeInvalid() throws Exception {
+    public void testDayRangeInvalid() {
         new CronSequenceGenerator("* * * 28-45 * *", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMonthInvalid() throws Exception {
+    public void testMonthInvalid() {
         new CronSequenceGenerator("0 0 0 25 13 ?", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMonthInvalidTooSmall() throws Exception {
+    public void testMonthInvalidTooSmall() {
         new CronSequenceGenerator("0 0 0 25 0 ?", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testDayOfMonthInvalid() throws Exception {
+    public void testDayOfMonthInvalid() {
         new CronSequenceGenerator("0 0 0 32 12 ?", timeZone);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMonthRangeInvalid() throws Exception {
+    public void testMonthRangeInvalid() {
         new CronSequenceGenerator("* * * * 11-13 *", timeZone);
     }
 
     @Test
-    public void testWhitespace() throws Exception {
+    public void testWhitespace() {
         CronSequenceGenerator trigger1 = new CronSequenceGenerator("*  *  * *  1 *", timeZone);
         CronSequenceGenerator trigger2 = new CronSequenceGenerator("* * * * 1 *", timeZone);
         assertEquals(trigger1, trigger2);
     }
 
     @Test
-    public void testMonthSequence() throws Exception {
+    public void testMonthSequence() {
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 30 23 30 1/3 ?", timeZone);
         calendar.set(2010, Calendar.DECEMBER, 30);
         Date date = calendar.getTime();
@@ -680,7 +680,7 @@ public class CronTriggerSpringTest extends Assert {
     }
 
     @Test
-    public void testDaylightSavingMissingHour() throws Exception {
+    public void testDaylightSavingMissingHour() {
         // This trigger has to be somewhere in between 2am and 3am
         CronSequenceGenerator trigger = new CronSequenceGenerator("0 10 2 * * *", timeZone);
         calendar.set(Calendar.DAY_OF_MONTH, 31);

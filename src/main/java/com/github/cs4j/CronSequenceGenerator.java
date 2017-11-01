@@ -1,9 +1,5 @@
 package com.github.cs4j;
 
-/**
- *
- */
-
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Calendar;
