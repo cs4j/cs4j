@@ -164,26 +164,27 @@ public class Scheduler implements AutoCloseable {
         @Override
         public void run() {
             if (initialDelay > 0) {
-                synchronized (monitor) {
-                    try {
-                        monitor.wait(timeUnit.toMillis(initialDelay));
-                    } catch (InterruptedException ignored) {
-                    }
-                }
+                pause(timeUnit.toMillis(initialDelay));
             }
             long checkIntervalMillis = timeUnit.toMillis(checkInterval);
-            try {
-                while (active) {
+            while (active) {
+                try {
                     checkAndExecute();
-                    try {
-                        synchronized (monitor) {
-                            monitor.wait(checkIntervalMillis);
-                        }
-                    } catch (InterruptedException ignored) {
-                    }
+                    pause(checkIntervalMillis);
+                } catch (Exception e) {
+                    System.err.println("Got internal error that must never happen!");
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                System.err.println("Got internal error that must never happen!");
+            }
+        }
+
+        private void pause(long checkIntervalMillis) {
+            try {
+                synchronized (monitor) {
+                    monitor.wait(checkIntervalMillis);
+                }
+            } catch (InterruptedException e) {
+                System.err.println("Got unexpected interrupted exception! Ignoring");
                 e.printStackTrace();
             }
         }
